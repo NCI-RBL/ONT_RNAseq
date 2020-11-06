@@ -1,2 +1,1 @@
-# ONT_RNAseq
-ONT RNAseq analysis (cDNA)
+# ont_rnaseq
