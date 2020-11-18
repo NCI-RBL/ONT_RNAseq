@@ -1,15 +1,31 @@
 from snakemake.utils import validate
 import pandas as pd
+import yaml
 
 # this container defines the underlying OS for each job when using the workflow
 # with --use-conda --use-singularity
-singularity: "docker://continuumio/miniconda3"
+# singularity: "docker://continuumio/miniconda3"
 
 ##### load config and sample sheets #####
 
 configfile: "config/config.yaml"
 validate(config, schema="../schemas/config.schema.yaml")
 
-samples = pd.read_csv(config["samples"], sep="\t").set_index("sample", drop=False)
-samples.index.names = ["sample_id"]
-validate(samples, schema="../schemas/samples.schema.yaml")
+samplesdf = pd.read_csv(config["samples"],sep="\t",header=0,index_col="sampleName")
+samples = list(samples.index)
+#now path to fast5 folder for sampleA will be sampledf["path_to_fast5_parent_folder"]["sampleA"]
+validate(samplesdf, schema="../schemas/samples.schema.yaml")
+
+## Load tools from TSV file
+# tools = pd.read_csv(config["tools"], sep="\t",header=0,index_col="tool")
+# validate(tools, schema="../schemas/tools.schema.yaml")
+#now envmodule for loading guppy will be tools["version"]["guppy"]
+
+## Load tools from YAML file
+with open(config["tools"]) as f:
+	tools = yaml.safe_load(f)
+
+## Load project metadata from TSV file
+# project = pd.read_csv(config["project"], sep="\t",header=0,index_col="key")
+# workdir = project["value"]["workdir"]
+## Project related metadata is directly moved into config.yaml file....no need for project.tsv
