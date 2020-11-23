@@ -3,3 +3,4 @@
 !.gitignore
 !.gitattributes
 site/
+test_*/
