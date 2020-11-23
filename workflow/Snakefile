@@ -6,22 +6,24 @@ import os, sys
 
 # Global workflow variables
 configfile: 'config/config.yaml'              # config dictionary
-#common.smk already defines
-#samples, samplesdf
-#tools
-#project
+
+WORKDIR = config["workdir"]
+# FLOWCELL = config["flowcell"]
+# KIT = config["kit"]
+
+# common.smk already defines
+# SAMPLES
+# SAMPLESDF
+# TOOLS
 
 include: "rules/common.smk"
 include: "rules/other.smk"
 
 # convert = {'Y': False, 'N': True}
 if config['basecalling'].startswith("Y"):
-    basecalling = True
+	basecalling = True
 else:
-    basecalling = False
-
-# The main entry point of your workflow.
-# After configuring, running snakemake -n in a clone of this repository should successfully execute a dry-run of the workflow.
+	basecalling = False
 
 
 report: "report/workflow.rst"
@@ -30,12 +32,11 @@ report: "report/workflow.rst"
 # singularity: "docker://continuumio/miniconda3"
 
 
-rule all:
-    input:
-        expand(join(workdir,fastqs,"{sample}.fastq.gz"), sample=samples)
-
-
 if basecalling:
-    include: "rules/basecalling.smk"
-
-
+	include: "rules/basecalling.smk"
+	rule all:
+		input:
+			expand(join(WORKDIR,"fastqs","{sample}.fastq.gz"), sample=SAMPLES),
+			expand(join(WORKDIR,"fastqs","{sample}.sequencing_summary.txt.gz"),sample=SAMPLES),
+			expand(join(WORKDIR,"qc","fastqc","{sample}_fastqc.zip"),sample=SAMPLES),
+			expand(join(WORKDIR,"qc","pycoQC","{sample}.pycoQC.html"),sample=SAMPLES)
