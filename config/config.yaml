@@ -1,8 +1,1 @@
-#you most probably dont need to change these
-tools: "config/tools.tsv"
-# you probably need to change these
-samples: "config/samples.tsv"
-workdir: "/path/to/workdir"
-basecalling: "Y"
-flowcell: "FLO-MIN106"
-kit: "SQK-RNA001"
+config_1DcDNA.yaml
